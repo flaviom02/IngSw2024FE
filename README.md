@@ -1,5 +1,7 @@
-# vue-project
+# Social Eventi Frontend - Software Engineering 2024 @ Unife
+Project for Software Engineering 2024 @ Unife course
 
+## vue-project
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
