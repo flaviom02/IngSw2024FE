@@ -1,7 +1,7 @@
 // src/components/EventList.vue
 
 <script>
-import axios from '@/axios'; // Importa l'istanza configurata di Axios
+import axios from 'axios'; // Importa l'istanza configurata di Axios
 
 export default {
   data() {
@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     getEventi() {
-      axios.get('/events')
+      axios.get('/api/events')
           .then(response => {
             this.eventi = response.data;
           })
@@ -28,7 +28,7 @@ export default {
     createEvento() {
       console.log('Dati del nuovo evento:', this.newEvento);
 
-      axios.post('/events', this.newEvento)
+      axios.post('/api/events', this.newEvento)
           .then(response => {
             console.log('Evento creato:', response.data);
             this.eventi.push(response.data);
@@ -42,7 +42,7 @@ export default {
       this.editingEvento = { ...evento };
     },
     updateEvento() {
-      axios.put(`/events/${this.editingEvento.id}`, this.editingEvento)
+      axios.put(`/api/events/${this.editingEvento.id}`, this.editingEvento)
           .then(response => {
             const index = this.eventi.findIndex(e => e.id === response.data.id);
             this.$set(this.eventi, index, response.data);
@@ -53,7 +53,7 @@ export default {
           });
     },
     deleteEvento(id) {
-      axios.delete(`/events/${id}`)
+      axios.delete(`/api/events/${id}`)
           .then(() => {
             this.eventi = this.eventi.filter(e => e.id !== id);
           })
