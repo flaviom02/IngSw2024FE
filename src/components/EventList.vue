@@ -1,58 +1,107 @@
-<template>
-  <div>
-    <h1>Event List</h1>
-    <form @submit.prevent="addEvent">
-      <input v-model="newEvent.name" placeholder="Event Name" required>
-      <input v-model="newEvent.location" placeholder="Event Location" required>
-      <input v-model="newEvent.date" placeholder="Event Date" required>
-      <button type="submit">Add Event</button>
-    </form>
-    <ul>
-      <li v-for="event in events" :key="event.id">
-        {{ event.name }} - {{ event.location }} - {{ event.date }}
-        <button @click="deleteEvent(event.id)">Delete</button>
-      </li>
-    </ul>
-  </div>
-</template>
+// src/components/EventList.vue
 
 <script>
-import axios from 'axios';
+import axios from '@/axios'; // Importa l'istanza configurata di Axios
 
 export default {
   data() {
     return {
-      events: [],
-      newEvent: {
-        name: '',
-        location: '',
-        date: ''
-      }
+      eventi: [],
+      newEvento: {
+        nome: '',
+        descrizione: '',
+        data: ''
+      },
+      editingEvento: null
+    };
+  },
+  methods: {
+    getEventi() {
+      axios.get('/events')
+          .then(response => {
+            this.eventi = response.data;
+          })
+          .catch(error => {
+            console.error('Errore nel recupero degli eventi:', error);
+          });
+    },
+    createEvento() {
+      console.log('Dati del nuovo evento:', this.newEvento);
+
+      axios.post('/events', this.newEvento)
+          .then(response => {
+            console.log('Evento creato:', response.data);
+            this.eventi.push(response.data);
+            this.newEvento = { nome: '', descrizione: '', data: '' };
+          })
+          .catch(error => {
+            console.error('Errore nella creazione dell\'evento:', error);
+          });
+    },
+    editEvento(evento) {
+      this.editingEvento = { ...evento };
+    },
+    updateEvento() {
+      axios.put(`/events/${this.editingEvento.id}`, this.editingEvento)
+          .then(response => {
+            const index = this.eventi.findIndex(e => e.id === response.data.id);
+            this.$set(this.eventi, index, response.data);
+            this.editingEvento = null;
+          })
+          .catch(error => {
+            console.error('Errore nell\'aggiornamento dell\'evento:', error);
+          });
+    },
+    deleteEvento(id) {
+      axios.delete(`/events/${id}`)
+          .then(() => {
+            this.eventi = this.eventi.filter(e => e.id !== id);
+          })
+          .catch(error => {
+            console.error('Errore nell\'eliminazione dell\'evento:', error);
+          });
+    },
+    cancelEdit() {
+      this.editingEvento = null;
     }
   },
   created() {
-    this.fetchEvents();
-  },
-  methods: {
-    fetchEvents() {
-      axios.get('/api/events')
-          .then(response => {
-            this.events = response.data;
-          });
-    },
-    addEvent() {
-      axios.post('/api/events', this.newEvent)
-          .then(response => {
-            this.events.push(response.data);
-            this.newEvent = { name: '', location: '', date: '' };
-          });
-    },
-    deleteEvent(id) {
-      axios.delete(`/api/events/${id}`)
-          .then(() => {
-            this.events = this.events.filter(event => event.id !== id);
-          });
-    }
+    this.getEventi();
   }
-}
+};
 </script>
+
+<template>
+  <div>
+    <h1>Gestione Eventi</h1>
+    <form @submit.prevent="createEvento">
+      <input v-model="newEvento.nome" placeholder="Nome" required />
+      <input v-model="newEvento.descrizione" placeholder="Descrizione" required />
+      <input v-model="newEvento.data" placeholder="Data" required />
+      <button type="submit">Aggiungi Evento</button>
+    </form>
+
+    <ul>
+      <li v-for="evento in eventi" :key="evento.id">
+        {{ evento.nome }} - {{ evento.descrizione }} - {{ evento.data }}
+        <button @click="editEvento(evento)">Modifica</button>
+        <button @click="deleteEvento(evento.id)">Elimina</button>
+      </li>
+    </ul>
+
+    <div v-if="editingEvento">
+      <h2>Modifica Evento</h2>
+      <form @submit.prevent="updateEvento">
+        <input v-model="editingEvento.nome" placeholder="Nome" required />
+        <input v-model="editingEvento.descrizione" placeholder="Descrizione" required />
+        <input v-model="editingEvento.data" placeholder="Data" required />
+        <button type="submit">Salva Modifiche</button>
+        <button @click="cancelEdit">Annulla</button>
+      </form>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+/* Aggiungi eventuali stili personalizzati qui */
+</style>
