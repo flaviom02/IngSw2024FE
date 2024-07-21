@@ -7,12 +7,17 @@
       <input v-model="newEvento.nome" placeholder="Nome" required />
       <input v-model="newEvento.descrizione" placeholder="Descrizione" required />
       <input v-model="newEvento.data" placeholder="Data" required />
+      <input v-model="newEvento.indirizzo" placeholder="Indirizzo" required />
+      <input v-model="newEvento.stato" placeholder="Stato" required />
+      <input v-model="newEvento.orario" placeholder="Orario" required />
       <button type="submit">Aggiungi Evento</button>
     </form>
 
     <ul>
       <li v-for="evento in eventi" :key="evento.event_id">
-        Nome Evento: {{ evento.name }} |Descrizione: {{ evento.description }} |Data: {{ evento.date }}
+        Nome Evento: {{ evento.name }} |Descrizione: {{ evento.description }} 
+        |Data: {{ evento.date }} |Indirizzo: {{ evento.address }} 
+        |Stato: {{ evento.address }} |Orario: {{ evento.time }}
         <button @click="editEvento(evento)">Modifica</button>
         <button @click="deleteEvento(evento.event_id)">Elimina</button>
       </li>
@@ -40,7 +45,10 @@ export default {
       newEvento: {
         nome: '',
         descrizione: '',
-        data: ''
+        data: '',
+        indirizzo: '',
+        stato: '',
+        orario: '',
       },
       editingEvento: null
     };
@@ -63,12 +71,15 @@ export default {
       axios.post('/api/events',{
         name: this.newEvento.nome,
         description: this.newEvento.descrizione,
-        date: this.newEvento.data
+        date: this.newEvento.data,
+        time: this.newEvento.orario,
+        address: this.newEvento.indirizzo,
+        status: this.newEvento.stato,
       })
           .then(response => {
             console.log('Evento creato:', response.data);
             this.eventi.push(response.data);
-            this.newEvento = { nome: '', descrizione: '', data: '' };
+            this.newEvento = { nome: '', descrizione: '', data: '' ,indirizzo:'', orario:'', stato:''};
           })
           .catch(error => {
             console.error('Errore nella creazione dell\'evento:', error);
