@@ -15,9 +15,9 @@
 
     <ul>
       <li v-for="evento in eventi" :key="evento.event_id">
-        Nome Evento: {{ evento.name }} |Descrizione: {{ evento.description }} 
-        |Data: {{ evento.date }} |Indirizzo: {{ evento.address }} 
-        |Stato: {{ evento.address }} |Orario: {{ evento.time }}
+        Nome Evento: {{ evento.name }} <br> Descrizione: {{ evento.description }}
+        <br> Data: {{ evento.date }} <br> Indirizzo: {{ evento.address }}
+        <br> Stato: {{ evento.address }} <br> Orario: {{ evento.time }} <br>
         <button @click="editEvento(evento)">Modifica</button>
         <button @click="deleteEvento(evento.event_id)">Elimina</button>
       </li>
