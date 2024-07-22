@@ -7,23 +7,28 @@
       <input v-model="newEvento.nome" placeholder="Nome" required />
       <input v-model="newEvento.descrizione" placeholder="Descrizione" required />
       <input v-model="newEvento.data" placeholder="Data" required />
+      <input v-model="newEvento.indirizzo" placeholder="Indirizzo" required />
+      <input v-model="newEvento.stato" placeholder="Stato" required />
+      <input v-model="newEvento.orario" placeholder="Orario" required />
       <button type="submit">Aggiungi Evento</button>
     </form>
 
     <ul>
-      <li v-for="evento in eventi" :key="evento.id">
-        {{ evento.nome }} - {{ evento.descrizione }} - {{ evento.data }}
+      <li v-for="evento in eventi" :key="evento.event_id">
+        Nome Evento: {{ evento.name }} |Descrizione: {{ evento.description }} 
+        |Data: {{ evento.date }} |Indirizzo: {{ evento.address }} 
+        |Stato: {{ evento.address }} |Orario: {{ evento.time }}
         <button @click="editEvento(evento)">Modifica</button>
-        <button @click="deleteEvento(evento.id)">Elimina</button>
+        <button @click="deleteEvento(evento.event_id)">Elimina</button>
       </li>
     </ul>
 
     <div v-if="editingEvento">
       <h2>Modifica Evento</h2>
       <form @submit.prevent="updateEvento">
-        <input v-model="editingEvento.nome" placeholder="Nome" required />
-        <input v-model="editingEvento.descrizione" placeholder="Descrizione" required />
-        <input v-model="editingEvento.data" placeholder="Data" required />
+        <input v-model="editingEvento.name" placeholder="Nome" required />
+        <input v-model="editingEvento.description" placeholder="Descrizione" required />
+        <input v-model="editingEvento.date" placeholder="Data" required />
         <button type="submit">Salva Modifiche</button>
         <button @click="cancelEdit">Annulla</button>
       </form>
@@ -40,7 +45,10 @@ export default {
       newEvento: {
         nome: '',
         descrizione: '',
-        data: ''
+        data: '',
+        indirizzo: '',
+        stato: '',
+        orario: '',
       },
       editingEvento: null
     };
@@ -49,7 +57,9 @@ export default {
     getEventi() {
       axios.get('/api/events')
           .then(response => {
+            console.log("eventi ricevuti: ", response.data);
             this.eventi = response.data;
+            console.log("valore dell'Array eventi:", this.eventi);
           })
           .catch(error => {
             console.error('Errore nel recupero degli eventi:', error);
@@ -61,12 +71,15 @@ export default {
       axios.post('/api/events',{
         name: this.newEvento.nome,
         description: this.newEvento.descrizione,
-        date: this.newEvento.data
+        date: this.newEvento.data,
+        time: this.newEvento.orario,
+        address: this.newEvento.indirizzo,
+        status: this.newEvento.stato,
       })
           .then(response => {
             console.log('Evento creato:', response.data);
             this.eventi.push(response.data);
-            this.newEvento = { nome: '', descrizione: '', data: '' };
+            this.newEvento = { nome: '', descrizione: '', data: '' ,indirizzo:'', orario:'', stato:''};
           })
           .catch(error => {
             console.error('Errore nella creazione dell\'evento:', error);
@@ -76,9 +89,15 @@ export default {
       this.editingEvento = { ...evento };
     },
     updateEvento() {
-      axios.put(`/api/events/${this.editingEvento.id}`, this.editingEvento)
+      console.log("Dati dell'evento che sto aggiornando: ",this.editingEvento, this.editingEvento.name)
+
+      axios.put(`/api/events/${this.editingEvento.event_id}`, {
+        name: this.editingEvento.name,
+        description: this.editingEvento.description,
+        date: this.editingEvento.date
+      } )
           .then(response => {
-            const index = this.eventi.findIndex(e => e.id === response.data.id);
+            const index = this.eventi.findIndex(e => e.event_id === response.data.event_id);
             this.$set(this.eventi, index, response.data);
             this.editingEvento = null;
           })
@@ -86,7 +105,9 @@ export default {
             console.error('Errore nell\'aggiornamento dell\'evento:', error);
           });
     },
+
     deleteEvento(id) {
+      console.log("Id dell'evento da eliminare : ",id)
       axios.delete(`/api/events/${id}`)
           .then(() => {
             this.eventi = this.eventi.filter(e => e.id !== id);
@@ -94,6 +115,7 @@ export default {
           .catch(error => {
             console.error('Errore nell\'eliminazione dell\'evento:', error);
           });
+          this.getEventi();
     },
     cancelEdit() {
       this.editingEvento = null;
