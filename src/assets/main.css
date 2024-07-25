@@ -28,7 +28,7 @@ a,
   }
 
   #app {
-    display: grid;
+
     grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
   }
@@ -36,4 +36,8 @@ a,
 
 .backendTable{
 margin-bottom: 1em;
+}
+
+.form-aggiungi{
+  text-align: center;
 }
