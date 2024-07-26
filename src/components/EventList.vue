@@ -7,7 +7,7 @@
         <input v-model="newEvento.url_img" placeholder="Immagine" required /><br>
         <input v-model="newEvento.nome" placeholder="Nome" required /><br>
         <input v-model="newEvento.descrizione" placeholder="Descrizione" required /><br>
-        <input v-model="newEvento.data" placeholder="Data" required /><br>
+        <input v-model="newEvento.data" placeholder="Data" type="date" /><br>
         <input v-model="newEvento.indirizzo" placeholder="Indirizzo" required /><br>
         <input v-model="newEvento.stato" placeholder="Stato" required /><br>
         <input v-model="newEvento.orario" placeholder="Orario" required /><br>
@@ -25,7 +25,7 @@
           <input v-model="ticket.price" type="number" placeholder="Prezzo Biglietto" required />
           <button @click="removeTicket(index)">Rimuovi Biglietto</button>
         </div>
-        <button @click="addTicket">Aggiungi Biglietto</button><br>
+        <button @click="addNewTicket">Aggiungi Biglietto</button><br>
 
         <button type="submit">Aggiungi Evento</button><br><br>
       </form>
@@ -51,7 +51,7 @@
         <input v-model="editingEvento.url_img" placeholder="Immagine" required/><br>
         <input v-model="editingEvento.name" placeholder="Nome" required/><br>
         <input v-model="editingEvento.description" placeholder="Descrizione" required/><br>
-        <input v-model="editingEvento.date" placeholder="Data" required/><br>
+        <input v-model="editingEvento.date" placeholder="Data" type="date" required/><br>
         <input v-model="editingEvento.address" placeholder="Indirizzo" required/><br>
         <input v-model="editingEvento.status" placeholder="Stato" required/><br>
         <input v-model="editingEvento.time" placeholder="Orario" required/><br>
@@ -67,9 +67,9 @@
         <div v-for="(ticket, index) in editingEvento.tickets" :key="index">
           <input v-model="ticket.type" placeholder="Tipo Biglietto" required/>
           <input v-model="ticket.price" type="number" placeholder="Prezzo Biglietto" required/>
-          <button @click="removeTicket(index, true)">Rimuovi Biglietto</button>
+          <button @click="removeTicket(index)">Rimuovi Biglietto</button>
         </div>
-        <button @click="addTicket(true)">Aggiungi Biglietto</button>
+        <button @click="addTicket">Aggiungi Biglietto</button>
         <br>
 
         <button type="submit">Salva Modifiche</button>
@@ -173,8 +173,12 @@ export default {
         tickets: this.editingEvento.tickets // Passa i biglietti
       })
           .then(response => {
+            console.log('Dati ricevuti: ', response)
             const index = this.eventi.findIndex(e => e.event_id === response.data.event_id);
-            this.$set(this.eventi, index, response.data);
+            if (index !== -1) {
+              // Usa Vue's reattività per aggiornare l'array
+              this.eventi.splice(index, 1, response.data);
+            }
             this.editingEvento = null;
           })
           .catch(error => {
@@ -194,13 +198,23 @@ export default {
     cancelEdit() {
       this.editingEvento = null;
     },
-    addTicket(editing = false) {
-      const target = editing ? this.editingEvento.tickets : this.newEvento.tickets;
-      target.push({type: '', price: ''});
+    addTicket() {
+      this.editingEvento.tickets.push({
+        type: '',
+        price: 0,
+      });
     },
-    removeTicket(index, editing = false) {
-      const target = editing ? this.editingEvento.tickets : this.newEvento.tickets;
-      target.splice(index, 1);
+    removeTicket(index) {
+      this.editingEvento.tickets.splice(index, 1);
+    },
+    addNewTicket() {
+      this.newEvento.tickets.push({
+        type: '',
+        price: 0,
+      });
+    },
+    removeNewTicket(index) {
+      this.newEvento.tickets.splice(index, 1);
     }
   },
   created() {
