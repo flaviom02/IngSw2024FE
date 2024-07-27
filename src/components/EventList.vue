@@ -103,7 +103,7 @@ export default {
   },
   methods: {
     getEventi() {
-      axios.get('/api/events')
+      axios.get('/api/events')  //Viene dato un errore per via dell'url di un immagine che ho preso da google, togliento il passaggio per google dovrebbe risolversi
           .then(response => {
             console.log("Eventi ricevuti: ", response.data);
             this.eventi = response.data;
@@ -113,7 +113,7 @@ export default {
           });
     },
     getCategories() {
-      axios.get('/api/categories')
+      axios.get('/api/categories/getall')
           .then(response => {
             console.log("Categorie ricevute: ", response.data);
             this.categories = response.data;
@@ -154,6 +154,8 @@ export default {
           .catch(error => {
             console.error('Errore nella creazione dell\'evento:', error);
           });
+      this.getEventi();
+
     },
     editEvento(evento) {
       this.editingEvento = {...evento};
