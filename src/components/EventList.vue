@@ -188,7 +188,7 @@ export default {
           this.newEvento.orario = evento.time;
           this.newEvento.indirizzo = evento.address;
           this.newEvento.stato = evento.status;
-          this.newEvento.selectedCategorie = evento.categories; // Passa gli ID delle categori
+          this.newEvento.selectedCategories = evento.categories; // Passa gli ID delle categori
           this.newEvento.tickets = evento.tickets; // Passa i bigliett
 
         })
