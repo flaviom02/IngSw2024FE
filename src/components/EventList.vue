@@ -5,7 +5,8 @@
       <h2>Aggiungi/Modifica il tuo evento</h2><br>
       <form @submit.prevent="submitHandler()">
         <div class="formElement">
-          <label v-if="newEvento.event_id > 0">Id Evento: {{ newEvento.event_id }}</label>
+          <label v-if="newEvento.event_id > 0">Modifica evento Id: {{ newEvento.event_id }}</label>
+          <label v-else>Inserimento nuovo evento</label>
         </div>
         <fieldset>
         <legend>Dati Generali</legend>
