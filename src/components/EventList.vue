@@ -73,7 +73,7 @@
         <br> Data: {{ evento.date }} <br> Indirizzo: {{ evento.address }}
         <br> Stato: {{ evento.status }} <br> Orario: {{ evento.time }} <br>
         Categoria: <span v-for="category in evento.categories" :key="category.category_id">{{ category.name }} </span><br>
-        Biglietti: <span v-for="ticket in evento.tickets" :key="ticket.ticket_id">{{ ticket.type }} - {{ ticket.price }} </span><br>
+        Biglietti: <span v-for="ticket in evento.tickets" :key="ticket.ticket_id">{{ ticket.type }} - {{ ticket.price }}<br> </span><br>
         <button @click="editEvento(evento)">Modifica</button>
         <button @click="deleteEvento(evento.event_id)">Elimina</button>
       </li>
@@ -90,14 +90,14 @@
         <input v-model="editingEvento.status" placeholder="Stato" required/><br>
         <input v-model="editingEvento.time" placeholder="Orario" required/><br>
 
-        <!-- Selezione delle categorie --><!--
+        <-- Selezione delle categorie --><!--
         <select v-model="editingEvento.selectedCategories" multiple>
           <option v-for="category in categories" :key="category.category_id" :value="category.category_id">
             {{ category.name }}
           </option>
         </select><br>
 
-        <!-- Inserimento dei biglietti --><!--
+        <-- Inserimento dei biglietti --><!--
         <div v-for="(ticket, index) in editingEvento.tickets" :key="index">
           <input v-model="ticket.type" placeholder="Tipo Biglietto" required/>
           <input v-model="ticket.price" type="number" placeholder="Prezzo Biglietto" required/>
@@ -111,8 +111,38 @@
       </form>
     </div>
     -->
-    
+    <div>
+      <h1>Iscrizione a categorie organizzatori</h1>
+      <h2>Fai l'organizzatore di professione? <br> Iscriviti alla categoria a cui appartieni</h2>
+      <form @submit.prevent="createIscrizione()">
+        <div class="formElement">
+          <label>Email</label>
+          <input v-model="newOrganizer.email" placeholder="Email" type="email" />
+        </div>
+        <fieldset class="categoryList">
+          <legend>Selezione Categorie</legend>
+
+          <div v-for="categoria in categories" :key="categoria.category_id">
+            <input type="checkbox" v-model="newOrganizer.categorie" :value="categoria.category_id" />
+            <label>{{ categoria.name }}</label>
+          </div>
+        </fieldset>
+        <div class="formButtons">
+          <button type="submit">Conferma</button>
+          <button type="reset" @click="clearSubscription">Annulla</button>
+        </div>
+      </form>
+    </div>
+    <div>
+      <h1>Lista iscrizioni</h1>
+      <ul style="display: flex; flex-wrap: wrap;">
+        <li v-for="organizer in organizers" style="list-style-type: none; border: 1px solid #ccc; padding: 10px; margin: 10px;">
+          Email: {{organizer.email}} <br> Categoria: {{organizer.category}}
+        </li>
+      </ul>
+    </div>
   </div>
+
   
 </template>
 
@@ -134,6 +164,11 @@ export default {
         orario: '',
         selectedCategories: [], // ID delle categorie selezionate
         tickets: [{type: '', price: ''}]
+      },
+      organizers: [],
+      newOrganizer: {
+        email:'',
+        categorie: []
       },
       editingEvento: null,
     };
@@ -177,25 +212,25 @@ export default {
     },
     getEvento(event_id) {
       axios.get(`/api/events/${event_id}`)
-        .then(response => {
-          console.log("Evento ricevuto: ", response.data);
-          const evento = response.data
-          
-          this.newEvento.event_id = evento.event_id
-          this.newEvento.url_img = evento.url_img;
-          this.newEvento.nome = evento.name;  
-          this.newEvento.descrizione = evento.description;
-          this.newEvento.data = evento.date;
-          this.newEvento.orario = evento.time;
-          this.newEvento.indirizzo = evento.address;
-          this.newEvento.stato = evento.status;
-          this.newEvento.selectedCategories = evento.categories; // Passa gli ID delle categori
-          this.newEvento.tickets = evento.tickets; // Passa i bigliett
+          .then(response => {
+            console.log("Evento ricevuto: ", response.data);
+            const evento = response.data
 
-        })
-        .catch(error => {
-          console.error('Errore nel recupero dell\'evento:', error);
-        });
+            this.newEvento.event_id = evento.event_id;
+            this.newEvento.url_img = evento.url_img;
+            this.newEvento.nome = evento.name;
+            this.newEvento.descrizione = evento.description;
+            this.newEvento.data = evento.date;
+            this.newEvento.orario = evento.time;
+            this.newEvento.indirizzo = evento.address;
+            this.newEvento.stato = evento.status;
+            this.newEvento.selectedCategories = evento.categories; // Passa gli ID delle categori
+            this.newEvento.tickets = evento.tickets; // Passa i bigliett
+
+          })
+          .catch(error => {
+            console.error('Errore nel recupero dell\'evento:', error);
+          });
     },
     getCategories() {
       axios.get('/api/categories/getall')
@@ -221,13 +256,13 @@ export default {
     },
     createEvento() {
       console.log('Dati del nuovo evento:', this.newEvento);
-      
+
       axios.post('/api/events/create', {
         url_img: this.newEvento.url_img,
         name: this.newEvento.nome,
         description: this.newEvento.descrizione,
         date: this.newEvento.data,
-        time: this.newEvento.orario.substring(0,5) + ":00",
+        time: this.newEvento.orario.substring(0, 5) + ":00",
         address: this.newEvento.indirizzo,
         status: this.newEvento.stato,
         categories: this.newEvento.selectedCategories, // Passa gli ID delle categorie
@@ -268,7 +303,7 @@ export default {
         name: this.newEvento.nome,
         description: this.newEvento.descrizione,
         date: this.newEvento.data,
-        time: this.newEvento.orario.substring(0,5) + ":00",
+        time: this.newEvento.orario.substring(0, 5) + ":00",
         address: this.newEvento.indirizzo,
         status: this.newEvento.stato,
         categories: this.newEvento.selectedCategories, // Passa gli ID delle categorie
@@ -311,21 +346,44 @@ export default {
     removeTicket(index) {
       this.newEvento.tickets.splice(index, 1);
     },
-    /*addNewTicket() {
-      this.newEvento.tickets.push({
-        type: '',
-        price: 0,
-      });
+    createIscrizione() {
+      // Log dei dati selezionati
+      console.log('Categorie selezionate per l\'iscrizione:', this.category);
+
+      axios.post('/api/organizers/create', {
+        email: this.newOrganizer.email,
+        category: this.newOrganizer.category
+      })
+          .then(response => {
+            console.log('Iscrizione alle categorie completata:', response.data);
+            window.alert("Iscrizione alle categorie completata!");
+            this.clearSubscription(); // Pulisci le selezioni
+          })
+          .catch(error => {
+            console.error('Errore nell\'iscrizione alle categorie:', error);
+            window.alert("Errore nell'iscrizione alle categorie.");
+          });
     },
-    removeNewTicket(index) {
-      this.newEvento.tickets.splice(index, 1);
-    }*/
+    clearSubscription() {
+      this.newOrganizer.categorie = []; // Pulisci le categorie selezionate
+    },
+    getOrganizers() {
+      axios.get('/api/organizers')
+          .then(response => {
+            console.log("Organizers ricevuti: ", response.data);
+            this.organizers = response.data;
+          })
+          .catch(error => {
+            console.error('Errore nel recupero degli organizzatori:', error);
+          });
+    }
   },
   created() {
     this.getEventi();
     this.getCategories(); // Carica le categorie all'avvio
+    this.getOrganizers();
   }
-};
+  };
 </script>
 <style>
   .formElement {
