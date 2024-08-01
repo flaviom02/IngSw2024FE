@@ -12,16 +12,16 @@
         <fieldset>
         <legend>Dati Generali</legend>
         <div class="formElement">
-          <label>Immagine</label>
-          <input v-model="newEvento.url_img" type="text" placeholder="Immagine:" required />
+          <label>Url Immagine</label>
+          <input v-model="newEvento.url_img" type="text" placeholder="Immagine" required />
         </div>
         <div class="formElement">
           <label>Nome</label>
-          <input v-model="newEvento.nome" type="text" placeholder="Nome:" required />
+          <input v-model="newEvento.nome" type="text" placeholder="Nome" required />
         </div>
         <div class="formElement">
           <label>Descrizione</label>
-          <input v-model="newEvento.descrizione" type="text" placeholder="Descrizione:" required />
+          <input v-model="newEvento.descrizione" type="text" placeholder="Descrizione" required />
         </div>
         <div class="formElement">
           <label>Data</label>
@@ -70,7 +70,7 @@
     <h1 style="text-align: center; padding-bottom: 20px">Lista eventi inseriti</h1>
     <ul class="event-list" style="display: flex; flex-wrap: wrap;">
       <li class="eventCard" v-for="evento in eventi" :key="evento.event_id" >
-          <img :src="evento.url_img" alt="Immagine evento">
+          <img :src="evento.url_img" alt="Immagine evento" style="font-size: 0;">
           <div>
             <p class="eventCardTitle eventCardLabel">{{ evento.name }}</p>
           </div>
@@ -80,7 +80,11 @@
           </div>
           <div>
             <p class="eventCardLabel">Data:</p>
-            <p>{{ evento.date }}</p>
+            <p>{{ getFormattedDate(evento.date) }}</p>
+          </div>
+          <div>
+            <p class="eventCardLabel">Orario:</p>
+            <p>{{ evento.time.substring(0, 5) }}</p>
           </div>
           <div>
             <p class="eventCardLabel">Indirizzo:</p>
@@ -89,10 +93,6 @@
           <div>
             <p class="eventCardLabel">Stato:</p>
             <p>{{ evento.status }}</p>
-          </div>
-          <div>
-            <p class="eventCardLabel">Orario:</p>
-            <p>{{ evento.time }}</p>
           </div>
           <div>
             <p class="eventCardLabel">Categoria:</p>
@@ -118,6 +118,7 @@
 
 <script>
 import axios from 'axios';
+import moment from 'moment';
 
 export default {
   data() {
@@ -303,6 +304,9 @@ export default {
     },
     removeTicket(index) {
       this.newEvento.tickets.splice(index, 1);
+    },
+    getFormattedDate(date) {
+      return moment(date).format("MM/DD/YYYY")
     },
   },
   created() {
