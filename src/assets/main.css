@@ -8,8 +8,9 @@ body {
 }
 
 .container {
-  max-width: 900px;
-  margin: 0 auto;
+  display: block;
+  max-width: 80%;
+  margin: 2% auto;
   padding: 20px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -21,6 +22,9 @@ h1, h2 {
 }
 
 .form-aggiungi {
+  display: block;
+  margin: 0 auto;
+  max-width: 60%;
   margin-bottom: 30px;
 }
 
@@ -41,6 +45,7 @@ form {
 .formElement {
   margin-bottom: 15px;
   display: flex;
+  justify-content: space-between;
   flex-direction: column;
 }
 
@@ -50,10 +55,12 @@ form {
 }
 
 .formElement input {
+  display: block;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1em;
+  
 }
 
 fieldset {
@@ -109,20 +116,23 @@ legend {
 }
 
 .event-list {
-  display: flex;
+  display: grid;
   flex-wrap: wrap;
   justify-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+
 }
 
 .event-list li {
-  width: 250px;
+  min-width: 300px;
   padding: 15px;
   margin: 10px;
   list-style: none;
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #f9f9f9;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .event-list img {
@@ -132,8 +142,29 @@ legend {
   margin-bottom: 10px;
 }
 
-.event-list button {
-  margin-top: 10px;
+.event-list p {
+  display: inline-block;
+  overflow-wrap: break-word;
+  margin: 0;
+  padding: 5px;
+  text-align: left;
+}
+
+.event-list div {
+  flex-direction: row;
+  text-align: left;
+}
+
+.eventCardLabel {
+  text-align: left;
+  font-weight: bold;
+  width: 30%;
+}
+
+.event-list button,
+.actionButtons button {
+  
+  margin: 10px 2px 0px 2px;
   padding: 5px 10px;
   border: none;
   border-radius: 4px;
@@ -142,11 +173,80 @@ legend {
   cursor: pointer;
 }
 
-.event-list button:hover {
+.event-list button:hover,
+.actionButtons button:hover {
   opacity: 0.9;
 }
 
-.event-list button[type="reset"] {
+.event-list button[type="reset"],
+.actionButtons button:hover[type="reset"] {
   background-color: #dc3545;
 }
 
+.eventCardTitle {
+  font-size: xx-large;
+  font-weight: bolder;
+  width: 100%;
+}
+
+
+
+.ticketInput {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ticketInput button {
+  padding: 10px;
+  margin-top: 1%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.ticketElement {
+  display: flex;
+}
+
+
+.ticketElement input, .ticketElement button {
+  display: inline-block;
+  padding: 10px;
+  margin-top: 1%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;  
+}
+
+.ticketElement input {
+  width: 38%;
+}
+.ticketElement button {
+  margin-left: 1%;
+  width: 24%;
+}
+
+.ticketList {
+  padding: 0;
+}
+
+.ticketList li{
+  padding: 15px;
+  margin: 10px;
+  margin-left: 0;
+  list-style: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+}
+
+.categoryTag {
+    margin-right: 10px;
+    background-color: #ccc;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
